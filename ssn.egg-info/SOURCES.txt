@@ -1,0 +1,6 @@
+README
+setup.py
+ssn.egg-info/PKG-INFO
+ssn.egg-info/SOURCES.txt
+ssn.egg-info/dependency_links.txt
+ssn.egg-info/top_level.txt
