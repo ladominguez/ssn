@@ -1,6 +1,10 @@
 import pandas as pd
 
-station_file = 'stations_ssn.dat'
+station_file = '/Users/antonio/Dropbox/python/ssn/stations_ssn.dat'
+names = ['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
+dtypes = {'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
+          'CC': float, 'MAD': float, 'Reference': str}
+
 
 def get_all_stations():
     df = pd.read_csv(station_file, delim_whitespace=True, names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str})
@@ -10,6 +14,12 @@ def get_all_stations():
 def get_station_by_name(name):
     df = get_all_stations()
     return df.loc[df['stnm'] == name]['latitude'][0], df.loc[df['stnm'] == name]['longitude'][0]
+
+def read_MF_file():
+    df = pd.read_csv(station_file, delim_whitespace=True, names = names, dtype = dtypes)
+    df['Date'] = df['Date'].str.cat(df['Time'], sep=' ')
+    df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S')
+    return df
 
 if __name__ == '__main__':
     ssn = get_all_stations()
