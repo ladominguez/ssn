@@ -13,7 +13,7 @@ def get_all_stations():
 
 def get_station_by_name(name):
     df = get_all_stations()
-    return df.loc[df['stnm'] == name]['latitude'][0], df.loc[df['stnm'] == name]['longitude'][0]
+    return df.loc[df['stnm'] == name]['latitude'].to_numpy()[0], df.loc[df['stnm'] == name]['longitude'].to_numpy()[0]
 
 def read_MF_file(match_filter_file):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes)
