@@ -18,7 +18,7 @@ def get_station_by_name(name):
 def read_MF_file(match_filter_file):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes)
     df['Date'] = df['Date'].str.cat(df['Time'], sep=' ')
-    df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S')
+    df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S.%f')
     return df
 
 if __name__ == '__main__':
