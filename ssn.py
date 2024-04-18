@@ -21,6 +21,33 @@ def read_MF_file(match_filter_file, header = None):
     df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S.%f')
     return df
 
+def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
+    with open(file, 'r') as f:
+        lines = f.readlines()
+        #df = pd.DataFrame(columns=['id', 'latitude', 'longitude',
+        #                           'depth', 'mag', 'no_repeaters',
+        #                           'Tr','dates'], dtype={'id':int,'latitude':float,
+        #                                               'longitude':float,'depth':float,
+        #                                               'mag':float,'no_repeaters':int,
+        #                                               'Tr':str,'dates':str})
+        df = pd.DataFrame({'id': pd.Series(dtype=int), 'latitude': pd.Series(dtype=float),
+                           'longitude': pd.Series(dtype=float), 'depth': pd.Series(dtype=float),
+                           'mag': pd.Series(dtype=float), 'no_repeaters': pd.Series(dtype=int),
+                           'Tr': pd.Series(dtype=str), 'dates': pd.Series(dtype=str)})
+        for k, line in enumerate(lines):
+            info = line.split(';')
+            row = pd.Series({'id':k+1,
+            'latitude': float(info[0].strip().split()[0]),
+            'longitude': float(info[0].strip().split()[1]),
+            'depth':  float(info[0].strip().split()[2]),
+            'mag': float(info[0].strip().split()[3]),
+            'no_repeaters': int(info[1].strip()),
+            'Tr': info[2].strip(),
+            'dates': info[3].strip()})
+            df = pd.concat([df, row.to_frame().T], ignore_index=True)
+
+    return df
+
 if __name__ == '__main__':
     ssn = get_all_stations()
     print(ssn)
