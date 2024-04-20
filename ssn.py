@@ -51,6 +51,9 @@ def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
 def M0_from_Mw(Mw):
     return 10**(1.5*Mw + 9.1)
 
+def Mw_from_M0(M0):
+    return (2/3)*(np.log10((M0) - 9.1))
+
 if __name__ == '__main__':
     ssn = get_all_stations()
     print(ssn)
