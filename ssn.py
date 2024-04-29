@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 station_file = '/Users/antonio/Dropbox/python/ssn/stations_ssn.dat'
-names = ['No', 'Date', 'Time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
-dtypes = {'No': int, 'Date': str, 'Time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
+names = ['No', 'date', 'time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
+dtypes = {'No': int, 'date': str, 'time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
           'CC': float, 'MAD': float, 'Reference': str}
 
 default_catalog = '/Users/antonio/Dropbox/BSL/CRSMEX/Catalogs/CATALOG_2001_2023_clean.DAT'
@@ -11,13 +11,14 @@ names_default_catalog = ['date', 'time', 'latitude', 'longitude', 'depth', 'magn
 types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude': float, 'depth': float, 'magnitude':
                          float, 'eq_id': str}
 
-def read_catalog4repeaters(filename=default_catalog):
-    df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
+def _combine_date_time_to_datetime(df):
     df['date'] = df['date'].str.cat(df['time'], sep=' ')
     df['date'] = pd.to_datetime(df['date'], format='%Y/%m/%d %H:%M:%S.%f')
     return df
 
-
+def read_catalog4repeaters(filename=default_catalog):
+    df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
+    return _combine_date_time_to_datetime(df)
 
 def get_all_stations():
     df = pd.read_csv(station_file, delim_whitespace=True, names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str})
@@ -30,9 +31,7 @@ def get_station_by_name(name):
 
 def read_MF_file(match_filter_file, header = None):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes, header = header)
-    df['Date'] = df['Date'].str.cat(df['Time'], sep=' ')
-    df['Date'] = pd.to_datetime(df['Date'], format='%Y/%m/%d %H:%M:%S.%f')
-    return df
+    return _combine_date_time_to_datetime(df)
 
 def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
     with open(file, 'r') as f:
