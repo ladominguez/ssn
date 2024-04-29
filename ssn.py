@@ -11,7 +11,7 @@ names_default_catalog = ['date', 'time', 'latitude', 'longitude', 'depth', 'magn
 types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude': float, 'depth': float, 'magnitude':
                          float, 'eq_id': str}
 
-def read_catlog4repeaters(filename=default_catalog):
+def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
     df['date'] = df['date'].str.cat(df['time'], sep=' ')
     df['date'] = pd.to_datetime(df['date'], format='%Y/%m/%d %H:%M:%S.%f')
