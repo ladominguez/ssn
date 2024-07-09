@@ -20,14 +20,19 @@ def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
     return _combine_date_time_to_datetime(df)
 
-def get_all_stations():
-    df = pd.read_csv(station_file, delim_whitespace=True, names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str})
-    
+def get_all_stations(network = None):
+    df = pd.read_csv(station_file, sep='\s+', names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str}) 
+    if network:
+        for row in df.itertuples():
+            net_id = row.stnm[2:4]
+            if network != net_id:
+                df.drop(row.Index, inplace=True)            
     return df
 
 def get_station_by_name(name):
     df = get_all_stations()
-    return df.loc[df['stnm'] == name]['latitude'].to_numpy()[0], df.loc[df['stnm'] == name]['longitude'].to_numpy()[0]
+    return df.loc[df['stnm'] == name.upper()]['latitude'].to_numpy()[0], df.loc[df['stnm'] == name.upper()]['longitude'].to_numpy()[0]
+
 
 def read_MF_file(match_filter_file, header = None):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes, header = header)
