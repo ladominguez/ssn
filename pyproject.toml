@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssn"
+version = "0.14"
+description = "SSN library"
+authors = [
+    {name = "Luis A. Dominguez", email = "ladominguez@igeofisica.unam.mx"}
+]
+dependencies = []  # Add any dependencies if needed
+readme = "README.md"
+license = {file = "LICENSE"}
+
+[project.urls]
+Homepage = "https://github.com/ladominguez/ssn"
+
+[tool.setuptools]
+packages = {find = {}}
+
