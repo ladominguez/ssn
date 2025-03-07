@@ -11,13 +11,33 @@ names_default_catalog = ['date', 'time', 'latitude', 'longitude', 'depth', 'magn
 types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude': float, 'depth': float, 'magnitude':
                          float, 'eq_id': str}
 
-def _combine_date_time_to_datetime(df):
+names_ssn_catalog = ["date","time","magnitude","latitude","longitude","depth","reference","local_date","local_time","status"]
+types_ssn_catalog = {"date":str,
+                     "magnitude": float,
+                     "latitude": float,
+                     "longitude": float,
+                     "depth": float,
+                     "reference": str,
+                     "local_date": str,
+                     "local_time": str}
+
+def _combine_date_time_to_datetime(df, ssn=True):
     df['date'] = df['date'].str.cat(df['time'], sep=' ')
-    df['date'] = pd.to_datetime(df['date'], format='%Y/%m/%d %H:%M:%S.%f')
+    if ssn:
+        df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S')
+    else:
+        df['date'] = pd.to_datetime(df['date'], format='%Y/%m/%d %H:%M:%S.%f')
     return df
 
 def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
+    return _combine_date_time_to_datetime(df)
+
+def read_ssn_catalog(filename):
+    """
+    WARNING. Remove last 7 trailing lines
+    """
+    df = pd.read_csv(filename, sep=",", names = names_ssn_catalog, dtype = types_ssn_catalog, skiprows = 5)
     return _combine_date_time_to_datetime(df)
 
 def get_all_stations(network = None):
