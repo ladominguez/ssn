@@ -6,6 +6,9 @@ names = ['No', 'date', 'time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'M
 dtypes = {'No': int, 'date': str, 'time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
           'CC': float, 'MAD': float, 'Reference': str}
 
+names_ssn = ['date', 'time', 'magnitude', 'latitude', 'longitude', 'depth', 'comments', 'local_date', 'local_time','status']
+dtypes_ssn = {'date': str, 'time': str, 'magnitude': float, 'latitude': float, 'longitude': float, 'depth': float,
+             'comments': str, 'local_date': str, 'local_time': str, 'status': str}
 default_catalog = '/Users/antonio/Dropbox/BSL/CRSMEX/Catalogs/CATALOG_2001_2023_clean.DAT'
 names_default_catalog = ['date', 'time', 'latitude', 'longitude', 'depth', 'magnitude','eq_id']
 types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude': float, 'depth': float, 'magnitude':
@@ -14,6 +17,15 @@ types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude
 def _combine_date_time_to_datetime(df):
     df['date'] = df['date'].str.cat(df['time'], sep=' ')
     df['date'] = pd.to_datetime(df['date'], format='%Y/%m/%d %H:%M:%S.%f')
+    return df
+
+def _combine_date_time_to_datetime_ssn(df):
+    df['date'] = df['date'].str.cat(df['time'], sep=' ')
+    df['datetime'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S')
+    df = df.drop('time', axis=1)
+    df = df.drop('date', axis=1)
+    df = df.rename(columns={'datetime': 'date'})
+
     return df
 
 def read_catalog4repeaters(filename=default_catalog):
@@ -38,6 +50,9 @@ def read_MF_file(match_filter_file, header = None):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes, header = header)
     return _combine_date_time_to_datetime(df)
 
+def read_ssn_file(ssn_file, header = None):
+    df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5)
+    return _combine_date_time_to_datetime_ssn(df)
 def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
     with open(file, 'r') as f:
         lines = f.readlines()
@@ -78,8 +93,11 @@ def Mw_from_logM0(logM0):
     return (2/3)*(logM0 - 9.1)
 
 if __name__ == '__main__':
-    ssn = get_all_stations()
-    print(ssn)
+    #ssn = get_all_stations()
+    #print(ssn)
 
-    station = get_station_by_name('CAIG')
-    print(station)
+    #station = get_station_by_name('CAIG')
+    #print(station)
+
+    df = read_ssn_file('SSN_catalog.sample')
+    print(df)
