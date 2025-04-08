@@ -45,7 +45,7 @@ def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
     return _combine_date_time_to_datetime(df)
 
-def read_ssn_catalog(filename):
+def read_ssn_catalog(filename):  # This function is repeated. It does the same as read_ssn_file
     """
     WARNING. Remove last 7 trailing lines
     """
