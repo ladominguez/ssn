@@ -92,7 +92,7 @@ def read_ssn_catalog(filename):  # This function is repeated. It does the same a
     return _combine_date_time_to_datetime(df)
 
 def get_all_stations(network = None):
-    df = pd.read_csv(station_file, sep='\s+', names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str}) 
+    df = pd.read_csv(station_file, sep=r'\s+', names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str}) 
     if network:
         for row in df.itertuples():
             net_id = row.stnm[2:4]
@@ -159,7 +159,7 @@ if __name__ == '__main__':
 
     #station = get_station_by_name('CAIG')
     #print(station)
-    catalog_file = '/Users/antonio/SynologyDrive/Research/Tomography/MP/Section/SSNMX_catalogo_20010101_20250414_utc_m38_99_MICH.csv'
+    catalog_file = '/Users/antonio/SynologyDrive/Research/Tomography/MP/Section/SSNMX_catalogo_20010101_20250414_utc_m35_99_MICH.csv'
 
     df = read_ssn_file(catalog_file)
     df = get_profile_ssn(df, AZUL, IGIG, 5)
