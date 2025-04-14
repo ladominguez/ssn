@@ -41,6 +41,15 @@ def _combine_date_time_to_datetime_ssn(df):
 
     return df
 
+def _combine_date_time_to_datetime_ssn(df):
+    df['date'] = df['date'].str.cat(df['time'], sep=' ')
+    df['datetime'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S')
+    df = df.drop('time', axis=1)
+    df = df.drop('date', axis=1)
+    df = df.rename(columns={'datetime': 'date'})
+
+    return df
+
 def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
     return _combine_date_time_to_datetime(df)
