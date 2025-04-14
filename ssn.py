@@ -24,6 +24,15 @@ types_ssn_catalog = {"date":str,
                      "local_date": str,
                      "local_time": str}
 
+simple_catalog = {'date': pd.Series(dtype='str'), 
+                  'latitude': pd.Series(dtype='float'),
+                  'longitude': pd.Series(dtype='float'),
+                  'depth': pd.Series(dtype='float'),
+                  'magnitude': pd.Series(dtype='float')}
+
+AZUL =(17.98652, -102.35257)
+IGIG =(20.75304, -101.32780)
+
 def _combine_date_time_to_datetime(df, ssn=True):
     df['date'] = df['date'].str.cat(df['time'], sep=' ')
     if ssn:
@@ -54,6 +63,36 @@ def read_catalog4repeaters(filename=default_catalog):
     df = pd.read_csv(filename, delim_whitespace=True, names = names_default_catalog, dtype = types_default_catalog)
     return _combine_date_time_to_datetime(df)
 
+def get_profile_ssn(df, point_a, point_b,min_distance_threshold,  num_points = 100,  magnitude_min = 3.5, save=False):
+    from interpolate_gc import interpolate_great_circle
+    from geopy.distance import great_circle
+
+    interpolation_line = interpolate_great_circle(point_a,point_b, num_points = 100)
+
+    out = pd.DataFrame(simple_catalog)
+    
+
+    for _, row in df.iterrows():
+        distances = []
+        for line_point in interpolation_line:
+            distances.append(great_circle((row['latitude'], row['longitude']), line_point).km)
+        
+        min_distance = np.array(distances).min()
+        if min_distance <= min_distance_threshold:
+            min_distance = np.array(distances).min()
+            out = pd.concat([out, pd.DataFrame({'date': [row['date']],
+                                               'latitude': [row['latitude']],
+                                               'longitude': [row['longitude']],
+                                               'depth': [row['depth']],
+                                               'magnitude': [row['magnitude']]})], ignore_index=True)
+            distance_from_start = great_circle(point_a,(row['latitude'], row['longitude'])).km 
+            print(row['date'], row['latitude'], row['longitude'], row['depth'], row['magnitude'], distance_from_start)
+
+    
+
+    
+    return out
+
 def read_ssn_catalog(filename):  # This function is repeated. It does the same as read_ssn_file
     """
     WARNING. Remove last 7 trailing lines
@@ -62,7 +101,7 @@ def read_ssn_catalog(filename):  # This function is repeated. It does the same a
     return _combine_date_time_to_datetime(df)
 
 def get_all_stations(network = None):
-    df = pd.read_csv(station_file, sep='\s+', names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str}) 
+    df = pd.read_csv(station_file, sep=r'\s+', names = ['latitude', 'longitude', 'stnm'], dtype = {'latitude':float, 'longitude':float, 'stnm':str}) 
     if network:
         for row in df.itertuples():
             net_id = row.stnm[2:4]
@@ -82,6 +121,8 @@ def read_MF_file(match_filter_file, header = None):
 def read_ssn_file(ssn_file, header = None):
     df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5)
     return _combine_date_time_to_datetime_ssn(df)
+
+
 def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
     with open(file, 'r') as f:
         lines = f.readlines()
@@ -127,6 +168,8 @@ if __name__ == '__main__':
 
     #station = get_station_by_name('CAIG')
     #print(station)
+    catalog_file = '/Users/antonio/SynologyDrive/Research/Tomography/MP/Section/SSNMX_catalogo_20010101_20250414_utc_m35_99_MICH.csv'
 
-    df = read_ssn_file('SSN_catalog.sample')
-    print(df)
+    df = read_ssn_file(catalog_file)
+    df = get_profile_ssn(df, AZUL, IGIG, 5)
+    pass
