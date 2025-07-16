@@ -122,6 +122,9 @@ def read_ssn_file(ssn_file, header = None):
     df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5)
     return _combine_date_time_to_datetime_ssn(df)
 
+def filter_time_interval(df, t_start, t_end):
+    filtered_df = df[(df['date'] >= start_time) & (df['date'] <= end_time)]
+    return filtered_df
 
 def read_repeaters_file(file='../data/time_intervals_20240125.dat'):
     with open(file, 'r') as f:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ssn"
-version = "0.14"
+version = "0.15"
 description = "SSN library"
 authors = [
     {name = "Luis A. Dominguez", email = "ladominguez@igeofisica.unam.mx"}
