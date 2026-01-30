@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-station_file = '/Users/antonio/Dropbox/python/ssn/stations_ssn.dat'
+station_file = '/Users/antonio/SynologyDrive/python/ssn/stations_ssn.dat'
 names = ['No', 'date', 'time', 'latitude', 'longitude', 'Depth', 'Mag', 'CC', 'MAD', 'Reference']
 dtypes = {'No': int, 'date': str, 'time': str, 'latitude': float, 'longitude': float, 'Depth': float, 'Mag': float,
           'CC': float, 'MAD': float, 'Reference': str}
@@ -16,13 +16,15 @@ types_default_catalog = {'date': str, 'time': str, 'latitude': float, 'longitude
 
 names_ssn_catalog = ["date","time","magnitude","latitude","longitude","depth","reference","local_date","local_time","status"]
 types_ssn_catalog = {"date":str,
+                     "time":str,
                      "magnitude": float,
                      "latitude": float,
                      "longitude": float,
                      "depth": float,
                      "reference": str,
                      "local_date": str,
-                     "local_time": str}
+                     "local_time": str,
+                     "status": str}
 
 simple_catalog = {'date': pd.Series(dtype='str'), 
                   'latitude': pd.Series(dtype='float'),
@@ -97,7 +99,7 @@ def read_ssn_catalog(filename):  # This function is repeated. It does the same a
     """
     WARNING. Remove last 7 trailing lines
     """
-    df = pd.read_csv(filename, sep=",", names = names_ssn_catalog, dtype = types_ssn_catalog, skiprows = 5)
+    df = pd.read_csv(filename, sep=",", names = names_ssn_catalog, dtype = types_ssn_catalog, skiprows = 5, quotechar='"')
     return _combine_date_time_to_datetime(df)
 
 def get_all_stations(network = None):
@@ -116,13 +118,13 @@ def get_station_by_name(name):
 
 def read_MF_file(match_filter_file, header = None):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes, header = header)
-    return _combine_date_time_to_datetime(df)
+    return _combine_date_time_to_datetime(df, ssn=False)
 
 def read_ssn_file(ssn_file, header = None):
     df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5)
     return _combine_date_time_to_datetime_ssn(df)
 
-def filter_time_interval(df, t_start, t_end):
+def filter_time_interval(df, start_time, end_time):
     filtered_df = df[(df['date'] >= start_time) & (df['date'] <= end_time)]
     return filtered_df
 
