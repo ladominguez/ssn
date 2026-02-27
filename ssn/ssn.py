@@ -120,9 +120,13 @@ def read_MF_file(match_filter_file, header = None):
     df = pd.read_csv(match_filter_file, delim_whitespace=True, names = names, dtype = dtypes, header = header)
     return _combine_date_time_to_datetime(df, ssn=False)
 
-def read_ssn_file(ssn_file, header = None):
-    df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5, engine='python',
-                     skipfooter=7)
+def read_ssn_file(ssn_file, header = True):
+    if header = True:
+        df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5, engine='python',
+                         skipfooter=7)
+    else:
+        df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn)
+
     return _combine_date_time_to_datetime_ssn(df)
 
 def filter_time_interval(df, start_time, end_time):
