@@ -121,7 +121,7 @@ def read_MF_file(match_filter_file, header = None):
     return _combine_date_time_to_datetime(df, ssn=False)
 
 def read_ssn_file(ssn_file, header = True):
-    if header = True:
+    if header == True:
         df = pd.read_csv(ssn_file, delimiter=',', names = names_ssn, dtype = dtypes_ssn, skiprows=5, engine='python',
                          skipfooter=7)
     else:
